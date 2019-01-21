@@ -1,0 +1,49 @@
+Grep Tool
+Общее описание
+grep​ - утилита командной строки, которая находит на вводе строки, отвечающие
+заданному регулярному выражению, и выводит их. Название представляет собой
+акроним английской фразы "search globally for lines matching the regular expression, and
+print them" - «искать везде строки, соответствующие регулярному выражению, и
+выводить их».
+Изначально была создана для операционной системы UNIX.
+Задача
+Задача реализовать ограниченную версию этой утилиты которая бы покрывала
+следующую функциональность:
+Примеры ниже подразумевают следующее содержимое файла filename.txt:
+some something on some somewhere
+Somewhere not here though
+some other thing around
+Жирный текст
+​ означает вывод программы.
+1. Простой поиск заданной подстроки. Например:
+$ grep something filename.txt
+some something on some somewhere
+2. Поддержка регулярных выражений:
+$ grep “^some.*?thing” filename.txt
+some something on some somewhere
+some other thing around
+3. Исключающий поиск. Вывод тех строк которые НЕ удовлетворяют условию:
+Tasks for Trainees: Grep Tool
+November 2018
+© 2008-2018 Logicify
+www.​logicify.com$ grep -v something filename.txt
+Somewhere not here though
+some other thing around
+Нефункциональные требования
+Утилита командной строки, не имеет оконного интерфейса, получает данные от
+пользователя через аргументы командной строки (как в примерах выше).
+Приложение должно легко обрабатывать очень большие файлы (5-10Гб) при этом
+выводя результат по мере получения данных.
+Код должен быть читаемым и стабильным.
+Единственное требование к технологиям - использовать Python 3.
+Guidelines
+1. Присылайте решение на ​hr@logicify.com​, копия CC на ​olga.rudenko@logicify.com​.
+2. Тема письма должна быть: ​Screening backend ​Name Surname​, например
+Screening backend Alexey Ivanov
+.​
+3. Пожалуйста, укажите, сколько времени было потрачено на задачу, в
+сопроводительном письме.
+Tasks for Trainees: Grep Tool
+November 2018
+© 2008-2018 Logicify
+www.​logicify.com

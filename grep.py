@@ -42,7 +42,7 @@ class Program:
       elif self.pattern is None:
         # reg exp pattern
         try:
-          self.pattern = re.compile(arg)
+          self.pattern = re.compile(arg, re.UNICODE)
         except re.error:
           raise Error("invalid pattern specified")
       else:
@@ -53,15 +53,18 @@ class Program:
           raise Error("'%s' is not valid file name" % arg)
   
   def iter_stdin(self):
-    yield sys.stdin.readline()
+    for line in sys.stdin:
+      yield line
     
   def iter_paths(self):
     for path in self.paths:
-      with open(path) as file:
-        yield file.readline()
+      with open(path, encoding="utf8") as file:
+        for line in file:
+          yield line
         
   def search_lines(self, input):
     for line in input:
+      # print("iter line: %s" % line)
       match = self.pattern.match(line)
       if ((match and not self.opts['v'])
         or (not match and self.opts['v'])):
@@ -87,7 +90,10 @@ if __name__ == '__main__':
       sys.exit(2)
     else:
       Program().exec_command_line(sys.argv[1:])
-      
+
+  except KeyboardInterrupt:
+    sys.exit(1)
+    
   except Program.Error as ex:
     sys.stderr.write("error: %s" % str(ex))
     sys.exit(2)
