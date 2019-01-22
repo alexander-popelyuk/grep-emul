@@ -32,7 +32,7 @@ class Program:
   def parse_args(self, argv):
     for arg in argv:
       if arg.startswith('-'):
-        # short option
+        # short option (flag)
         for c in arg[1:]:
           if c in self.opts.keys():
             self.opts[c] = True
@@ -53,7 +53,7 @@ class Program:
   
   def iter_stdin(self):
     for line in sys.stdin:
-      yield line.encode(sys.stdout.encoding)
+      yield line.encode(sys.stdin.encoding)
     
   def iter_paths(self):
     for path in self.paths:
@@ -63,11 +63,10 @@ class Program:
         
   def search_lines(self, input):
     for line in input:
-      #sys.stdout.write(line.decode(sys.stdout.encoding))
       match = self.pattern.search(line)
       if ((match and not self.opts['v'])
         or (not match and self.opts['v'])):
-          sys.stdout.write(line.decode(sys.stdout.encoding))
+          sys.stdout.write(line.decode(sys.stdin.encoding))
           self.lines_printed += 1
         
   def exec_command_line(self, argv):
@@ -81,7 +80,6 @@ class Program:
       self.search_lines(self.iter_stdin())
     sys.exit(0 if self.lines_printed > 0 else 1)
   
-  
 if __name__ == '__main__':
   try:
     if len(sys.argv) < 2:
@@ -94,9 +92,9 @@ if __name__ == '__main__':
     sys.exit(1)
     
   except Program.Error as ex:
-    sys.stderr.write("error: %s" % str(ex))
+    sys.stderr.write("error: %s%s" % (str(ex), os.linesep))
     sys.exit(2)
     
   except Exception as ex:
-    sys.stderr.write("unexpected error: %s" % str(ex))
+    sys.stderr.write("unexpected error: %s%s" % (str(ex), os.linesep))
     sys.exit(2)
