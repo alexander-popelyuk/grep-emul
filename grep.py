@@ -12,12 +12,11 @@ USAGE:
   
 OPTIONS:
   -h   print this information
-  -v   reverse search
+  -v   invert search results
   
 """
 
 class Program:
- 
   class Error(Exception):
     pass
   
@@ -38,37 +37,37 @@ class Program:
           if c in self.opts.keys():
             self.opts[c] = True
           else:
-            raise Error("unknwon option '%s'" % c)
+            raise self.Error("unknwon option '%s'" % c)
       elif self.pattern is None:
         # reg exp pattern
         try:
-          self.pattern = re.compile(arg, re.UNICODE)
+          self.pattern = re.compile(arg.encode(sys.stdout.encoding))
         except re.error:
-          raise Error("invalid pattern specified")
+          raise self.Error("invalid pattern specified")
       else:
         # file name
         if os.path.isfile(arg):
           self.paths.append(arg)
         else:
-          raise Error("'%s' is not valid file name" % arg)
+          raise self.Error("'%s' is not valid file name" % arg)
   
   def iter_stdin(self):
     for line in sys.stdin:
-      yield line
+      yield line.encode(sys.stdout.encoding)
     
   def iter_paths(self):
     for path in self.paths:
-      with open(path, encoding="utf8") as file:
+      with open(path, encoding='utf8') as file:
         for line in file:
-          yield line
+          yield line.encode('utf8')
         
   def search_lines(self, input):
     for line in input:
-      # print("iter line: %s" % line)
-      match = self.pattern.match(line)
+      #sys.stdout.write(line.decode(sys.stdout.encoding))
+      match = self.pattern.search(line)
       if ((match and not self.opts['v'])
         or (not match and self.opts['v'])):
-          print(line)
+          sys.stdout.write(line.decode(sys.stdout.encoding))
           self.lines_printed += 1
         
   def exec_command_line(self, argv):
@@ -76,7 +75,7 @@ class Program:
     if self.opts['h']:
       print(usage)
       sys.exit(0)
-    if self.paths:  # look up path
+    if self.paths:  # look up files
       self.search_lines(self.iter_paths())
     else:  # read from stdin
       self.search_lines(self.iter_stdin())
