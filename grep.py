@@ -41,7 +41,7 @@ class Program:
       elif self.pattern is None:
         # reg exp pattern
         try:
-          self.pattern = re.compile(arg.encode(sys.stdout.encoding))
+          self.pattern = re.compile(arg)
         except re.error:
           raise self.Error("invalid pattern specified")
       else:
@@ -53,20 +53,20 @@ class Program:
   
   def iter_stdin(self):
     for line in sys.stdin:
-      yield line.encode(sys.stdin.encoding)
+      yield line
     
   def iter_paths(self):
     for path in self.paths:
       with open(path, encoding='utf8') as file:
         for line in file:
-          yield line.encode('utf8')
+          yield line
         
   def search_lines(self, input):
     for line in input:
       match = self.pattern.search(line)
       if ((match and not self.opts['v'])
         or (not match and self.opts['v'])):
-          sys.stdout.write(line.decode(sys.stdin.encoding))
+          sys.stdout.write(line)
           self.lines_printed += 1
         
   def exec_command_line(self, argv):
